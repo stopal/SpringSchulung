@@ -36,4 +36,15 @@ class KundeControllerTest {
             .andExpect(jsonPath("$.vorname").value("Anna"))
             .andExpect(jsonPath("$.nachname").value("Albert"))
     }
+
+    @Test
+    fun `Kunden koennen per Nachname aufgerufen werden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/nachname/Albert").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].kundennummer").value(1))
+            .andExpect(jsonPath("$[0].vorname").value("Anna"))
+            .andExpect(jsonPath("$[0].nachname").value("Albert"))
+    }
 }

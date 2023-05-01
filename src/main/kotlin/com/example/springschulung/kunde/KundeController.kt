@@ -25,4 +25,9 @@ class KundeController(private val kundeService: KundeService) {
     fun getKundeByKundennummer(@PathVariable kundennummer: Int): KundeEntity? {
         return kundeService.getKundeByKundennummer(kundennummer)
     }
+
+    @GetMapping("/nachname/{nachname}")
+    fun getKundeByNachname(@PathVariable nachname: String): List<KundeEntity> {
+        return kundeService.getKundeByNachname(nachname)
+    }
 }
