@@ -35,4 +35,9 @@ class KundeService(private val kundeRepository: KundeRepository) {
         - Testet den neuen Endpunkt mit verschiedenen Werten
      */
 
+    fun getAllKundeStartingWith(char: Char): List<KundeEntity> {
+        val all = kundeRepository.findAll()
+        return all.filter { it.vorname.startsWith(char, true) }
+    }
+
 }

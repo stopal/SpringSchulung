@@ -30,4 +30,9 @@ class KundeController(private val kundeService: KundeService) {
     fun getKundeByNachname(@PathVariable nachname: String): List<KundeEntity> {
         return kundeService.getKundeByNachname(nachname)
     }
+
+    @GetMapping("/starting-with/{character}")
+    fun getAllKundenStartingWith(@PathVariable character: Char): List<KundeEntity> {
+        return kundeService.getAllKundeStartingWith(character)
+    }
 }

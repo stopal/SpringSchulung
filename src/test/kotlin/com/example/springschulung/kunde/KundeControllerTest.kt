@@ -47,4 +47,15 @@ class KundeControllerTest {
             .andExpect(jsonPath("$[0].vorname").value("Anna"))
             .andExpect(jsonPath("$[0].nachname").value("Albert"))
     }
+
+    @Test
+    fun `Kunden koennen mit dem Anfangsbuchstaben des Nachnamens gefunden werden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/starting-with/A").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].kundennummer").value(1))
+            .andExpect(jsonPath("$[0].vorname").value("Anna"))
+            .andExpect(jsonPath("$[0].nachname").value("Albert"))
+    }
 }
