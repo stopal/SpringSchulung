@@ -7,6 +7,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
+  sql:
+    init:
+      data-locations: classpath:kunden.sql
+
 
 # By design, the in-memory database is volatile, and results in data loss after application restart.
 # We can change that behavior by using file-based storage. To do this we need to update the spring.datasource.url property:
