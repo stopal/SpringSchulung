@@ -35,4 +35,9 @@ class KundeController(private val kundeService: KundeService) {
     fun getAllKundenStartingWith(@PathVariable character: Char): List<KundeEntity> {
         return kundeService.getAllKundeStartingWith(character)
     }
+
+    @PostMapping
+    fun createKunde(@RequestBody body: CreateKundeDto): KundeEntity? {
+        return kundeService.createKunde(body)
+    }
 }

@@ -23,5 +23,6 @@ interface KundeRepository : JpaRepository<KundeEntity, String> {
     - Testet den Endpunkt und erstellt neue Kundeneinträge
     */
 
+    fun save(kundeEntity: KundeEntity): KundeEntity?
 
 }

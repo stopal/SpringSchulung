@@ -58,4 +58,32 @@ class KundeControllerTest {
             .andExpect(jsonPath("$[0].vorname").value("Anna"))
             .andExpect(jsonPath("$[0].nachname").value("Albert"))
     }
+
+    @Test
+    fun `Ein neuer Kunde kann erstellt werden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/kunde").accept(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                        "vorname": "Peter",
+                        "nachname": "Pan"
+                    }
+                    """.trim()
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.vorname").value("Peter"))
+            .andExpect(jsonPath("$.nachname").value("Pan"))
+
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/nachname/Pan").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].vorname").value("Peter"))
+            .andExpect(jsonPath("$[0].nachname").value("Pan"))
+
+    }
 }

@@ -18,6 +18,15 @@ class KundeService(private val kundeRepository: KundeRepository) {
         return kundeRepository.findByNachname(nachname)
     }
 
+    fun createKunde(body: CreateKundeDto): KundeEntity? {
+        val neuerKunde = KundeEntity(
+            null,
+            body.vorname,
+            body.nachname
+        )
+        return kundeRepository.save(neuerKunde)
+    }
+
 
     /*
     ####### Einstiegsübung Service #######
