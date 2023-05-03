@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Beispiel-API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /kunde:
+    get:
+      summary: Liste aller Kunden abrufen
+      responses:
+        '200':
+          description: Erfolgreiche Anfrage
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    kundennummer:
+                      type: integer
+                      description: Die ID des Kunden
+                    vorname:
+                      type: string
+                      description: Der Vorname des Kunden
+                    nachname:
+                      type: string
+                      description: Der Vorname des Kunden
+                  example:
+                    - kundennummer: 1
+                      vorname: Max
+                      nachname: Mustermann
+                    - kundennummer: 2
+                      vorname: Susanne
+                      nachname: Müller
