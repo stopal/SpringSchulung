@@ -1,5 +1,7 @@
 package com.example.springschulung.kunde
 
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,13 +19,18 @@ class KundeController(private val kundeService: KundeService) {
      */
 
     @GetMapping
-    fun getAllKunden(): List<KundeEntity> {
-        return kundeService.getAllKunden()
+    fun getAllKunden(): ResponseEntity<List<KundeEntity>> {
+        return ResponseEntity.status(HttpStatus.OK).body(kundeService.getAllKunden())
     }
 
     @GetMapping("/{kundennummer}")
-    fun getKundeByKundennummer(@PathVariable kundennummer: Int): KundeEntity? {
-        return kundeService.getKundeByKundennummer(kundennummer)
+    fun getKundeByKundennummer(@PathVariable kundennummer: Int): ResponseEntity<KundeEntity?> {
+        val kundeByKundennummer = kundeService.getKundeByKundennummer(kundennummer)
+        return if(kundeByKundennummer != null) {
+            ResponseEntity.status(HttpStatus.OK).body(kundeByKundennummer)
+        } else {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
+        }
     }
 
     @GetMapping("/nachname/{nachname}")
@@ -37,7 +44,13 @@ class KundeController(private val kundeService: KundeService) {
     }
 
     @PostMapping
-    fun createKunde(@RequestBody body: CreateKundeDto): KundeEntity? {
-        return kundeService.createKunde(body)
+    fun createKunde(@RequestBody body: CreateKundeDto): ResponseEntity<KundeEntity?> {
+        val kunde = kundeService.createKunde(body)
+
+        return if(kunde != null) {
+            ResponseEntity.status(HttpStatus.CREATED).body(kunde)
+        } else {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
+        }
     }
 }
