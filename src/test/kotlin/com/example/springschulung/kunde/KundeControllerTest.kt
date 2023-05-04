@@ -1,5 +1,6 @@
 package com.example.springschulung.kunde
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -38,6 +39,26 @@ class KundeControllerTest {
     }
 
     @Test
+    fun `Wir geben 404 zurueck wenn der angefragte Kunde nicht existiert`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/11231").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$").doesNotExist())
+    }
+
+    @Test
+    fun `Wir geben 404 zurück wenn der angefragte Kunde nicht existiert 2`() {
+        val result = mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/11231").accept(MediaType.APPLICATION_JSON)
+        )
+            .andReturn()
+
+        Assertions.assertEquals(result.response.status, 404)
+        Assertions.assertEquals(result.response.contentAsString, "")
+    }
+
+    @Test
     fun `Kunden koennen per Nachname aufgerufen werden`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/kunde/nachname/Albert").accept(MediaType.APPLICATION_JSON)
@@ -73,7 +94,7 @@ class KundeControllerTest {
                 )
                 .contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(status().isOk)
+            .andExpect(status().isCreated)
             .andExpect(jsonPath("$.vorname").value("Peter"))
             .andExpect(jsonPath("$.nachname").value("Pan"))
 

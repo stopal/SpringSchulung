@@ -25,9 +25,9 @@ class KundeController(private val kundeService: KundeService) {
 
     @GetMapping("/{kundennummer}")
     fun getKundeByKundennummer(@PathVariable kundennummer: Int): ResponseEntity<KundeEntity?> {
-        val kundeByKundennummer = kundeService.getKundeByKundennummer(kundennummer)
-        return if(kundeByKundennummer != null) {
-            ResponseEntity.status(HttpStatus.OK).body(kundeByKundennummer)
+        val kunde = kundeService.getKundeByKundennummer(kundennummer)
+        return if (kunde != null) {
+            ResponseEntity.status(HttpStatus.OK).body(kunde)
         } else {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
         }
@@ -47,7 +47,7 @@ class KundeController(private val kundeService: KundeService) {
     fun createKunde(@RequestBody body: CreateKundeDto): ResponseEntity<KundeEntity?> {
         val kunde = kundeService.createKunde(body)
 
-        return if(kunde != null) {
+        return if (kunde != null) {
             ResponseEntity.status(HttpStatus.CREATED).body(kunde)
         } else {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
