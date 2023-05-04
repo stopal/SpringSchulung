@@ -12,8 +12,6 @@ class KundeController(private val kundeService: KundeService) {
     Erstelle einen Endpunkt um Kunden per Nachnamen abzurufen.
      */
 
-
-    @CrossOrigin
     @GetMapping
     fun getAllKunden(): List<KundeEntity> {
         return kundeService.getAllKunden()
