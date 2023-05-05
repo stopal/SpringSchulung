@@ -53,4 +53,16 @@ class KundeController(private val kundeService: KundeService) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
         }
     }
+
+    @PutMapping("/{kundennummer}")
+    fun updateKunde(@RequestBody body: CreateKundeDto, @PathVariable kundennummer: Int): ResponseEntity<KundeEntity> {
+        val kunde = kundeService.updateKunde(body, kundennummer)
+        return ResponseEntity.status(HttpStatus.OK).body(kunde)
+    }
+
+    @DeleteMapping("/{kundennummer}")
+    fun deleteKunde(@PathVariable kundennummer: Int): ResponseEntity<Unit> {
+        kundeService.deleteKunde(kundennummer)
+        return ResponseEntity.ok().build()
+    }
 }

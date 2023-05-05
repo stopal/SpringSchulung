@@ -24,5 +24,4 @@ interface KundeRepository : JpaRepository<KundeEntity, String> {
     */
 
     fun save(kundeEntity: KundeEntity): KundeEntity?
-
 }

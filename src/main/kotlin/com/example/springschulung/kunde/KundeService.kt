@@ -49,4 +49,17 @@ class KundeService(private val kundeRepository: KundeRepository) {
         return all.filter { it.vorname.startsWith(char, true) }
     }
 
+    fun deleteKunde(kundennummer: Int) {
+        kundeRepository.deleteById(kundennummer.toString())
+    }
+
+    fun updateKunde(body: CreateKundeDto, kundennummer: Int): KundeEntity? {
+        val updatedKunde = KundeEntity(
+            kundennummer,
+            body.vorname,
+            body.nachname
+        )
+        return kundeRepository.save(updatedKunde)
+    }
+
 }

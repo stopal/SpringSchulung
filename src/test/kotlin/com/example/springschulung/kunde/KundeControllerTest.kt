@@ -105,6 +105,44 @@ class KundeControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].vorname").value("Peter"))
             .andExpect(jsonPath("$[0].nachname").value("Pan"))
+    }
 
+    @Test
+    fun `Kunden koennen verändert werden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/kunde/10").accept(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                        "vorname": "XXX",
+                        "nachname": "YYY"
+                    }
+                    """.trim()
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/10").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.vorname").value("XXX"))
+            .andExpect(jsonPath("$.nachname").value("YYY"))
+    }
+
+    @Test
+    fun `Kunden koennen geloescht werden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/kunde/20").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/20").accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$").doesNotExist())
     }
 }
