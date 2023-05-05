@@ -10,6 +10,8 @@ spring:
   sql:
     init:
       data-locations: classpath:kunden.sql
+  h2:
+    console.enabled: true
 
 
 # By design, the in-memory database is volatile, and results in data loss after application restart.

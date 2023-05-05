@@ -1,11 +1,13 @@
 package com.example.springschulung.kunde
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -13,10 +15,28 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Sql(value = ["classpath:reset-kunde.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+
+// Wenn wir wollen können wir unsere Testdaten weiterhin von einer SQL Datei importieren
+//@Sql(value = ["classpath:test-kunde-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class KundeControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var kundeRepository: KundeRepository
+
+    private val testKunde = KundeEntity(
+        null,
+        "Anna",
+        "Albert"
+    )
+
+    @BeforeEach
+    fun setup() {
+        kundeRepository.save(testKunde)
+    }
 
     @Test
     fun `Es koennen alle Kunden abgerufen werden`() {
@@ -110,7 +130,7 @@ class KundeControllerTest {
     @Test
     fun `Kunden koennen verändert werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/kunde/10").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.put("/kunde/1").accept(MediaType.APPLICATION_JSON)
                 .content(
                     """
                     {
@@ -125,7 +145,7 @@ class KundeControllerTest {
             .andExpect(status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/kunde/10").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/1").accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.vorname").value("XXX"))
@@ -135,12 +155,12 @@ class KundeControllerTest {
     @Test
     fun `Kunden koennen geloescht werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/kunde/20").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.delete("/kunde/1").accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/kunde/20").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/1").accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$").doesNotExist())
