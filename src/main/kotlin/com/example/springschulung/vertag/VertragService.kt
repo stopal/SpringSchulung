@@ -1,41 +1,54 @@
 package com.example.springschulung.vertag
 
+import com.example.springschulung.kunde.KundeRepository
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class VertragService(private val vertragsRepository: VertragRepository) {
+class VertragService(
+    private val vertragsRepository: VertragRepository,
+    private val kundeRepository: KundeRepository
+) {
 
-    fun getAllVertraege(): List<VertragEntity> {
-        return vertragsRepository.findAll()
+    fun getAllVertraege(kundennummer: Int): List<VertragEntity> {
+        val kunde = kundeRepository.findByKundennummer(kundennummer)
+        return vertragsRepository.findAllByKunde(kunde)
     }
 
-    fun getVertragByVertragsnummer(vertragsnummer: Int): VertragEntity? {
-        return vertragsRepository.findByVertragnummer(vertragsnummer).getOrNull()
+    fun getVertragByVertragsnummer(vertragsnummer: Int, kundennummer: Int): VertragEntity? {
+        val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return null
+        return vertragsRepository.findByVertragnummerAndKunde(vertragsnummer, kunde)
     }
 
-    fun createVertrag(body: CreateVertragDto): VertragEntity? {
+    fun createVertrag(body: CreateVertragDto, kundennummer: Int): VertragEntity? {
+        val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return null
+
         val neuerVertrag = VertragEntity(
             null,
             body.vertragsArt,
             body.vertragsBeginn,
-            body.vertragsEnde
-
+            body.vertragsEnde,
+            kunde
         )
         return vertragsRepository.save(neuerVertrag)
     }
 
-    fun updateVertrag(body: CreateVertragDto, vertragsnummer: Int): VertragEntity? {
+    fun updateVertrag(body: CreateVertragDto, vertragsnummer: Int, kundennummer: Int): VertragEntity? {
+        val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return null
+
         val updatedVertrag = VertragEntity(
             vertragsnummer,
             body.vertragsArt,
             body.vertragsBeginn,
-            body.vertragsEnde
+            body.vertragsEnde,
+            kunde
         )
         return vertragsRepository.save(updatedVertrag)
     }
 
-    fun deleteVertrag(vertragsnummer: Int) {
-        vertragsRepository.deleteById(vertragsnummer.toString())
+    @Transactional
+    fun deleteVertrag(vertragsnummer: Int, kundennummer: Int) {
+        val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return
+        vertragsRepository.deleteByVertragnummerAndKunde(vertragsnummer, kunde)
     }
 }

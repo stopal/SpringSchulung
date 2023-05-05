@@ -1,5 +1,7 @@
 package com.example.springschulung.vertrag
 
+import com.example.springschulung.kunde.KundeEntity
+import com.example.springschulung.kunde.KundeRepository
 import com.example.springschulung.vertag.VertragEntity
 import com.example.springschulung.vertag.VertragRepository
 import com.example.springschulung.vertag.VertragsArt
@@ -20,6 +22,7 @@ import java.time.LocalDate
 @SpringBootTest
 @AutoConfigureMockMvc
 @Sql(value = ["classpath:reset-vertrag.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = ["classpath:reset-kunde.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 
 // Wir könnten uns auch die initialen Daten für die Datenbank per sql Datei einpflegen
 //@Sql(value = ["classpath:test-vertrag-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -29,20 +32,43 @@ class VertragControllerTest {
     private lateinit var mockMvc: MockMvc
 
     @Autowired
+    private lateinit var kundeRepository: KundeRepository
+
+    @Autowired
     private lateinit var vertragRepository: VertragRepository
 
-    private val testVertrag = VertragEntity(
-        null,
-        VertragsArt.GAS,
-        LocalDate.of(2022, 12, 1),
-        LocalDate.of(2023, 12, 1)
-    )
+    private lateinit var testKunde: KundeEntity
+    private lateinit var testVertrag: VertragEntity
+
 
     // Einsetzen von einem Testsatz in die Datenbank
     // Steht für jede einzelne Testmethode zur verfügung
     @BeforeEach
     fun setup() {
-        vertragRepository.save(testVertrag)
+        val kunde = kundeRepository.save(
+            KundeEntity(
+                null,
+                "Max",
+                "Mustermann",
+                emptyList()
+            )
+        )!!
+
+        testVertrag = vertragRepository.save(
+            VertragEntity(
+                null,
+                VertragsArt.GAS,
+                LocalDate.of(2022, 12, 1),
+                LocalDate.of(2023, 12, 1),
+                kunde
+            )
+        )!!
+
+        testKunde = kundeRepository.save(
+            kunde.copy(
+                vertraege = listOf(testVertrag)
+            )
+        )!!
     }
 
     // Wir können auch einfach deleteAll() ausführen um die Datenbank zu leeren. Jedoch wird der Index damit nicht zurückgesetzt!
@@ -52,18 +78,22 @@ class VertragControllerTest {
 //    }
 
     @Test
-    fun `Es koennen alle Vertraege abgerufen werden`() {
+    fun `Es koennen alle Vertraege abgerufen werden von einen Kunden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/vertrag").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag").accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$").isArray)
+            .andExpect(jsonPath("$[0].vertragnummer").value(1))
+            .andExpect(jsonPath("$[0].vertragsArt").value("GAS"))
+            .andExpect(jsonPath("$[0].vertragsBeginn").value("2022-12-01"))
+            .andExpect(jsonPath("$[0].vertragsEnde").value("2023-12-01"))
     }
 
     @Test
-    fun `Ein Vertrag kann per Vertragsnummer aufgerufen werden`() {
+    fun `Ein Vertrag von einem Kunden kann per Vertragsnummer aufgerufen werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/vertrag/1").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+                .accept(MediaType.APPLICATION_JSON)
         )
 
             .andExpect(status().isOk)
@@ -72,6 +102,37 @@ class VertragControllerTest {
             .andExpect(jsonPath("$.vertragsBeginn").value("2022-12-01"))
             .andExpect(jsonPath("$.vertragsEnde").value("2023-12-01"))
     }
+
+    @Test
+    fun `Es koennen keine Vertraege abgerufen werden dem Kunden nicht gehoeren`() {
+        // ein fremder Kunde
+        val fremderKunde = kundeRepository.save(
+            KundeEntity(
+                null,
+                "X",
+                "Y",
+                emptyList()
+            )
+        )
+
+        // ein anderer Vertrag
+        val fremderVertrag = vertragRepository.save(
+            VertragEntity(
+                null,
+                VertragsArt.STROM,
+                LocalDate.of(2022, 12, 1),
+                LocalDate.of(2023, 12, 1),
+                fremderKunde!!
+            )
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${fremderVertrag!!.vertragnummer}")
+                .accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNotFound)
+    }
+
 
     @Test
     fun `Wir geben 404 zurueck wenn der angefragte Vertrag nicht existiert`() {
@@ -84,38 +145,16 @@ class VertragControllerTest {
         Assertions.assertEquals(result.response.contentAsString, "")
     }
 
-    // Muss noch implementiert werden
-//    @Test
-//    fun `Vertraege koennen per VertragsArt aufgerufen werden`() {
-//        val stromVertrag = VertragEntity(
-//            null,
-//            VertragsArt.STROM,
-//            LocalDate.of(2000, 12, 1),
-//            LocalDate.of(2001, 12, 1)
-//        )
-//
-//        vertragRepository.save(stromVertrag)
-//
-//        mockMvc.perform(
-//            MockMvcRequestBuilders.get("/vertrag/art/GAS").accept(MediaType.APPLICATION_JSON)
-//        )
-//            .andExpect(status().isOk)
-//            .andExpect(jsonPath("$[0].vertragnummer").value(1))
-//            .andExpect(jsonPath("$[0].vertragsArt").value("GAS"))
-//            .andExpect(jsonPath("$[0].vertragsBeginn").value("2022-12-01"))
-//            .andExpect(jsonPath("$[0].vertragsEnde").value("2023-12-01"))
-//    }
-
     @Test
     fun `Ein neuer Vertrag kann erstellt werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/vertrag").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.post("/kunde/${testKunde.kundennummer}/vertrag").accept(MediaType.APPLICATION_JSON)
                 .content(
                     """
                     {
                         "vertragsArt": "STROM",
                         "vertragsBeginn": "2022-12-01",
-                        "vertragsEnde": "2023-12-01"
+                        "vertragsEnde": "2030-12-01"
                     }
                     """.trim()
                 )
@@ -124,22 +163,22 @@ class VertragControllerTest {
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.vertragsArt").value("STROM"))
             .andExpect(jsonPath("$.vertragsBeginn").value("2022-12-01"))
-            .andExpect(jsonPath("$.vertragsEnde").value("2023-12-01"))
-
+            .andExpect(jsonPath("$.vertragsEnde").value("2030-12-01"))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/vertrag").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag").accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[1].vertragsArt").value("STROM"))
             .andExpect(jsonPath("$[1].vertragsBeginn").value("2022-12-01"))
-            .andExpect(jsonPath("$[1].vertragsEnde").value("2023-12-01"))
+            .andExpect(jsonPath("$[1].vertragsEnde").value("2030-12-01"))
     }
 
     @Test
-    fun `Vertraege koennen verändert werden`() {
+    fun `Vertraege koennen veraendert werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/vertrag/1").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.put("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+                .accept(MediaType.APPLICATION_JSON)
                 .content(
                     """
                     {
@@ -155,7 +194,8 @@ class VertragControllerTest {
             .andExpect(status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/vertrag/1").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+                .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.vertragsArt").value("WASSER"))
@@ -166,12 +206,14 @@ class VertragControllerTest {
     @Test
     fun `Vertraege koennen geloescht werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/vertrag/1").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.delete("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+                .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/vertrag/1").accept(MediaType.APPLICATION_JSON)
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+                .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$").doesNotExist())

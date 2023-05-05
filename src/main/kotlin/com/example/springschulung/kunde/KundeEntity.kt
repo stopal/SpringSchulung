@@ -1,5 +1,7 @@
 package com.example.springschulung.kunde
 
+import com.example.springschulung.vertag.VertragEntity
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -14,5 +16,9 @@ data class KundeEntity(
     val vorname: String,
 
     @Column
-    val nachname: String
+    val nachname: String,
+
+    @OneToMany(mappedBy = "kunde")
+    @JsonIgnore
+    val vertraege: List<VertragEntity>
 )

@@ -7,7 +7,7 @@ interface KundeRepository : JpaRepository<KundeEntity, String> {
 
     override fun findAll(): List<KundeEntity>
 
-    fun findByKundennummer(kundennummer: Int): Optional<KundeEntity>
+    fun findByKundennummer(kundennummer: Int): KundeEntity?
 
     fun findByNachname(nachname: String): List<KundeEntity>
 

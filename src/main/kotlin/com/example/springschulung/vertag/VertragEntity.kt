@@ -1,5 +1,6 @@
 package com.example.springschulung.vertag
 
+import com.example.springschulung.kunde.KundeEntity
 import jakarta.persistence.*
 import java.time.LocalDate
 
@@ -18,5 +19,9 @@ data class VertragEntity(
     val vertragsBeginn: LocalDate,
 
     @Column
-    val vertragsEnde: LocalDate
+    val vertragsEnde: LocalDate,
+
+    @ManyToOne
+    @JoinColumn(name = "kundennummer")
+    val kunde: KundeEntity
 )

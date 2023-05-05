@@ -10,9 +10,9 @@ class KundeServiceTest {
 
     @Test
     fun `getAllKundeStartingWith() returns correct Kunde when the character matches`() {
-        val kundeMatches = KundeEntity(1, "Max", "Mustermann")
-        val kundeNotMatching = KundeEntity(1, "Peter", "Peterson")
-        val list = listOf(kundeMatches,kundeNotMatching)
+        val kundeMatches = KundeEntity(1, "Max", "Mustermann", emptyList())
+        val kundeNotMatching = KundeEntity(1, "Peter", "Peterson", emptyList())
+        val list = listOf(kundeMatches, kundeNotMatching)
         val kundeService = KundeService(kundeRepository)
         every { kundeRepository.findAll() } returns list
 
@@ -24,7 +24,7 @@ class KundeServiceTest {
 
     @Test
     fun `getAllKundeStartingWith() return an empty list when it doesnt match`() {
-        val kunde = KundeEntity(1, "Max", "Mustermann")
+        val kunde = KundeEntity(1, "Max", "Mustermann", emptyList())
         val kundeService = KundeService(kundeRepository)
         every { kundeRepository.findAll() } returns listOf(kunde)
 

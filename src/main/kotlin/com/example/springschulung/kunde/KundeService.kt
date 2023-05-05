@@ -11,7 +11,7 @@ class KundeService(private val kundeRepository: KundeRepository) {
     }
 
     fun getKundeByKundennummer(kundennummer: Int): KundeEntity? {
-        return kundeRepository.findByKundennummer(kundennummer).getOrNull()
+        return kundeRepository.findByKundennummer(kundennummer)
     }
 
     fun getKundeByNachname(nachname: String): List<KundeEntity> {
@@ -22,7 +22,8 @@ class KundeService(private val kundeRepository: KundeRepository) {
         val neuerKunde = KundeEntity(
             null,
             body.vorname,
-            body.nachname
+            body.nachname,
+            emptyList()
         )
         return kundeRepository.save(neuerKunde)
     }
@@ -54,12 +55,13 @@ class KundeService(private val kundeRepository: KundeRepository) {
     }
 
     fun updateKunde(body: CreateKundeDto, kundennummer: Int): KundeEntity? {
+        val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return null
         val updatedKunde = KundeEntity(
             kundennummer,
             body.vorname,
-            body.nachname
+            body.nachname,
+            kunde.vertraege
         )
         return kundeRepository.save(updatedKunde)
     }
-
 }

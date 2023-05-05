@@ -30,7 +30,8 @@ class KundeControllerTest {
     private val testKunde = KundeEntity(
         null,
         "Anna",
-        "Albert"
+        "Albert",
+        emptyList()
     )
 
     @BeforeEach

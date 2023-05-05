@@ -5,17 +5,22 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/vertrag")
+@RequestMapping("/kunde/{kundennummer}/vertrag")
 class VertragController(private val vertragService: VertragService) {
 
     @GetMapping
-    fun getAllVertraege(): ResponseEntity<List<VertragEntity>> {
-        return ResponseEntity.status(HttpStatus.OK).body(vertragService.getAllVertraege())
+    fun getAllVertraege(
+        @PathVariable kundennummer: Int
+    ): ResponseEntity<List<VertragEntity>> {
+        return ResponseEntity.status(HttpStatus.OK).body(vertragService.getAllVertraege(kundennummer))
     }
 
     @GetMapping("/{vertragsnummer}")
-    fun getVertragByVertragsnummer(@PathVariable vertragsnummer: Int): ResponseEntity<VertragEntity?> {
-        val vertrag = vertragService.getVertragByVertragsnummer(vertragsnummer)
+    fun getVertragByVertragsnummer(
+        @PathVariable vertragsnummer: Int,
+        @PathVariable kundennummer: Int
+    ): ResponseEntity<VertragEntity?> {
+        val vertrag = vertragService.getVertragByVertragsnummer(vertragsnummer, kundennummer)
         return if (vertrag != null) {
             ResponseEntity.status(HttpStatus.OK).body(vertrag)
         } else {
@@ -24,11 +29,14 @@ class VertragController(private val vertragService: VertragService) {
     }
 
     @PostMapping
-    fun createVertrag(@RequestBody body: CreateVertragDto): ResponseEntity<VertragEntity?> {
-        val kunde = vertragService.createVertrag(body)
+    fun createVertrag(
+        @PathVariable kundennummer: Int,
+        @RequestBody body: CreateVertragDto
+    ): ResponseEntity<VertragEntity?> {
+        val vertrag = vertragService.createVertrag(body, kundennummer)
 
-        return if (kunde != null) {
-            ResponseEntity.status(HttpStatus.CREATED).body(kunde)
+        return if (vertrag != null) {
+            ResponseEntity.status(HttpStatus.CREATED).body(vertrag)
         } else {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
         }
@@ -37,15 +45,19 @@ class VertragController(private val vertragService: VertragService) {
     @PutMapping("/{vertragsnummer}")
     fun updateVertrag(
         @RequestBody body: CreateVertragDto,
-        @PathVariable vertragsnummer: Int
+        @PathVariable vertragsnummer: Int,
+        @PathVariable kundennummer: Int
     ): ResponseEntity<VertragEntity> {
-        val kunde = vertragService.updateVertrag(body, vertragsnummer)
-        return ResponseEntity.status(HttpStatus.OK).body(kunde)
+        val vertrag = vertragService.updateVertrag(body, vertragsnummer, kundennummer)
+        return ResponseEntity.status(HttpStatus.OK).body(vertrag)
     }
 
     @DeleteMapping("/{vertragsnummer}")
-    fun deleteVertrag(@PathVariable vertragsnummer: Int): ResponseEntity<Unit> {
-        vertragService.deleteVertrag(vertragsnummer)
+    fun deleteVertrag(
+        @PathVariable vertragsnummer: Int,
+        @PathVariable kundennummer: Int
+    ): ResponseEntity<Unit> {
+        vertragService.deleteVertrag(vertragsnummer, kundennummer)
         return ResponseEntity.ok().build()
     }
 }
