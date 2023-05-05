@@ -10,7 +10,7 @@ data class VertragEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val vertragnummer: Int?,
+    val vertragsnummer: Int?,
 
     @Column
     val vertragsArt: VertragsArt,

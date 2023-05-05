@@ -17,7 +17,7 @@ class VertragService(
 
     fun getVertragByVertragsnummer(vertragsnummer: Int, kundennummer: Int): VertragEntity? {
         val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return null
-        return vertragsRepository.findByVertragnummerAndKunde(vertragsnummer, kunde)
+        return vertragsRepository.findByVertragsnummerAndKunde(vertragsnummer, kunde)
     }
 
     fun createVertrag(body: CreateVertragDto, kundennummer: Int): VertragEntity? {
@@ -49,6 +49,6 @@ class VertragService(
     @Transactional
     fun deleteVertrag(vertragsnummer: Int, kundennummer: Int) {
         val kunde = kundeRepository.findByKundennummer(kundennummer) ?: return
-        vertragsRepository.deleteByVertragnummerAndKunde(vertragsnummer, kunde)
+        vertragsRepository.deleteByVertragsnummerAndKunde(vertragsnummer, kunde)
     }
 }

@@ -83,7 +83,7 @@ class VertragControllerTest {
             MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag").accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$[0].vertragnummer").value(1))
+            .andExpect(jsonPath("$[0].vertragsnummer").value(1))
             .andExpect(jsonPath("$[0].vertragsArt").value("GAS"))
             .andExpect(jsonPath("$[0].vertragsBeginn").value("2022-12-01"))
             .andExpect(jsonPath("$[0].vertragsEnde").value("2023-12-01"))
@@ -92,12 +92,12 @@ class VertragControllerTest {
     @Test
     fun `Ein Vertrag von einem Kunden kann per Vertragsnummer aufgerufen werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragsnummer}")
                 .accept(MediaType.APPLICATION_JSON)
         )
 
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.vertragnummer").value(1))
+            .andExpect(jsonPath("$.vertragsnummer").value(1))
             .andExpect(jsonPath("$.vertragsArt").value("GAS"))
             .andExpect(jsonPath("$.vertragsBeginn").value("2022-12-01"))
             .andExpect(jsonPath("$.vertragsEnde").value("2023-12-01"))
@@ -127,7 +127,7 @@ class VertragControllerTest {
         )
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${fremderVertrag!!.vertragnummer}")
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${fremderVertrag!!.vertragsnummer}")
                 .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isNotFound)
@@ -177,7 +177,7 @@ class VertragControllerTest {
     @Test
     fun `Vertraege koennen veraendert werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+            MockMvcRequestBuilders.put("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragsnummer}")
                 .accept(MediaType.APPLICATION_JSON)
                 .content(
                     """
@@ -194,7 +194,7 @@ class VertragControllerTest {
             .andExpect(status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragsnummer}")
                 .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
@@ -206,13 +206,13 @@ class VertragControllerTest {
     @Test
     fun `Vertraege koennen geloescht werden`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+            MockMvcRequestBuilders.delete("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragsnummer}")
                 .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragnummer}")
+            MockMvcRequestBuilders.get("/kunde/${testKunde.kundennummer}/vertrag/${testVertrag.vertragsnummer}")
                 .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isNotFound)

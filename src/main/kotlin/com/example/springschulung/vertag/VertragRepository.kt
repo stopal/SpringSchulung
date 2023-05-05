@@ -10,9 +10,9 @@ interface VertragRepository : JpaRepository<VertragEntity, String> {
 
     fun save(kundeEntity: VertragEntity): VertragEntity?
 
-    fun findByVertragnummerAndKunde(vertragnummer: Int, kunde: KundeEntity): VertragEntity?
+    fun findByVertragsnummerAndKunde(vertragsnummer: Int, kunde: KundeEntity): VertragEntity?
 
     fun findAllByKunde(kunde: KundeEntity?): List<VertragEntity>
-    fun deleteByVertragnummerAndKunde(vertragnummer: Int, kunde: KundeEntity)
+    fun deleteByVertragsnummerAndKunde(vertragsnummer: Int, kunde: KundeEntity)
 
 }
