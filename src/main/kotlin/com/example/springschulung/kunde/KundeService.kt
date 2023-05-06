@@ -22,19 +22,17 @@ class KundeService(private val kundeRepository: KundeRepository) {
     /*
     ####### Einstiegsübung Service #######
 
-	Erstelle einen Endpunkt der alle Kunden zurückgibt deren Vornamen mit einem bestimmten Buchstaben anfangen.
-
-	Der Buchstabe wird als Endpunktpfadparameter mitgegeben.
-
-	Der KundeService sollte eine Funktion anbieten der alle Kunden aus der Datenbank ausließt aber nur die weitergibt die mit dem entsprechenden Buchstaben anfangen.
-	Groß- und Kleinschreibweise ist irrelevant! (case insensitive)
-
-	Hilfreich:
-	Kotlin filter()
-	https://kotlinlang.org/docs/collection-filtering.html#filter-by-predicate
-
-	Kotlins startsWith()
-	https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/starts-with.html
+    - Der KundeService dient als Bindeglied zwischen dem Controller und dem Repository
+    - Erstelle einen Endpunkt, der alle Kunden zurückgibt, deren Vornamen mit einem bestimmten Buchstaben anfangen.
+        - Der Buchstabe soll als Pfadparameter mitgegeben werden.
+    - Der KundeService sollte eine Funktion anbieten der alle Kunden aus der Datenbank ausliest aber nur die weitergibt die mit dem entsprechenden Buchstaben anfangen.
+    -    Groß- und Kleinschreibweise ist irrelevant! (case insensitive)
+    - Hilfreiche Funktionen:
+        - filter()
+        - https://kotlinlang.org/docs/collection-filtering.html#filter-by-predicate
+        - startsWith()
+        - https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/starts-with.html
+        - Testet den neuen Endpunkt mit verschiedenen Werten
      */
 
 }

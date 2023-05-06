@@ -9,7 +9,11 @@ class KundeController(private val kundeService: KundeService) {
     /*
     ####### Einstiegsübung Controller #######
 
-    Erstelle einen Endpunkt um Kunden per Nachnamen abzurufen.
+    Erweitert den KundeController um einen weiteren Endpunkt “/kunde/nachname/{nachname}”
+        - Der Endpunkt soll Kunden mit dem passenden Nachnamen zurückliefern
+        - Es existiert bereits eine Funktion im KundeService die ihr benutzen könnt
+        - Um KundeRepository braucht ihr euch nicht kümmern
+        - Ruft euren Endpunkt auf
      */
 
     @GetMapping

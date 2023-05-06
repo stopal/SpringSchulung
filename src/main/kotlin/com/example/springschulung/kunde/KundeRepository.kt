@@ -14,15 +14,13 @@ interface KundeRepository : JpaRepository<KundeEntity, String> {
     /*
     ####### Einstiegsübung Repository #######
 
-	Erstelle einen Endpunkt um neue Kunden anzulegen.
-
-	Füge dem KundeRepository die save() Funktion hinzu.
-
-	Die Endpunktmethode braucht die korrekte @Mapping Annotation. Welche HTTP Methode wäre das?
-	Die Endpunktmethode hat ein Funktionsparameter die mit @RequestBody annotiert werden muss.
-	Erstellt eine neue DTO Klasse die als Datentyp dient für den body. Welche Parameter brauchen wir um einen neuen Kunden zu erstellen?
-
-	Die Bodyvariable könnt ihr dem KundeService weiterreichen damit dieser daraus eine KundeEntity erstellt und die save funktion aufruft.
+    - Erstelle einen neuen Endpunkt, um neue Kunden anzulegen
+    - Erweitere KundeRepository um die save() Funktion
+    - Die neue Endpunktmethode braucht die korrekte @*Mapping Annotation. Welche HTTP Methode wäre das?
+    - Die Endpunktmethode hat einen Funktionsparameter die mit @RequestBody annotiert werden muss
+    - Erstellt eine neue DTO-Klasse, die als Datentyp dient für die Bodyvariable. Welche Parameter brauchen wir, um einen neuen Kunden zu erstellen?
+    - Die Bodyvariable könnt ihr dem KundeService weiterreichen damit dieser daraus eine KundeEntity erstellt und die save funktion aufruft
+    - Testet den Endpunkt und erstellt neue Kundeneinträge
     */
 
 
